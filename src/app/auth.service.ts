@@ -1,3 +1,5 @@
+// File: src/app/auth.service.ts
+
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
@@ -87,7 +89,7 @@ export class AuthService {
       throw new Error('Usuario no autenticado');
     }
     
-    return this.http.get<UserProfile>(`${this.apiUrl}/perfil/${user.id}/`, { headers: this.getHeaders() }).pipe(
+    return this.http.get<UserProfile>(`${this.apiUrl}/usuarios/perfil/`, { headers: this.getHeaders() }).pipe(
       tap(profile => {
         const updatedProfile = { ...profile, id: user.id };
         this.saveUserToStorage(updatedProfile);
@@ -106,7 +108,7 @@ export class AuthService {
       throw new Error('Usuario no autenticado');
     }
 
-    return this.http.put<UserProfile>(`${this.apiUrl}/perfil/editar/`, datos, { 
+    return this.http.put<UserProfile>(`${this.apiUrl}/interaccionPerfil/editar/`, datos, { 
       headers: this.getHeaders()
     }).pipe(
       tap(updatedProfile => {
@@ -147,5 +149,27 @@ export class AuthService {
   getUserId(): number | null {
     const user = this.getUserFromStorage();
     return user?.id || null;
+  }
+
+  getUsuario(id: number): Observable<UserProfile> {
+    return this.http.get<UserProfile>(`${this.apiUrl}/usuarios/${id}/`, {
+      headers: this.getHeaders()
+    }).pipe(
+      catchError(error => {
+        console.error('Error al obtener usuario:', error);
+        throw error;
+      })
+    );
+  }
+
+  editarUsuario(id: number, datos: Partial<UserProfile>): Observable<UserProfile> {
+    return this.http.put<UserProfile>(`${this.apiUrl}/interaccionPerfil/editar/${id}/`, datos, {
+      headers: this.getHeaders()
+    }).pipe(
+      catchError(error => {
+        console.error('Error al editar usuario:', error);
+        throw error;
+      })
+    );
   }
 }

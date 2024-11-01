@@ -19,48 +19,8 @@ import { AuthService } from '../auth.service';
     MatInputModule,
     MatButtonModule
   ],
-  template: `
-    <mat-card>
-      <mat-card-title>Iniciar Sesión</mat-card-title>
-      <mat-card-content>
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-          <mat-form-field>
-            <input matInput placeholder="Nombre de usuario" formControlName="username">
-            <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
-              El nombre de usuario es requerido
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <input matInput type="password" placeholder="Contraseña" formControlName="password">
-            <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
-              La contraseña es requerida
-            </mat-error>
-          </mat-form-field>
-          <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">
-            Iniciar Sesión
-          </button>
-        </form>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button routerLink="/registro">¿No tienes cuenta? Regístrate</button>
-      </mat-card-actions>
-    </mat-card>
-  `,
-  styles: [`
-    mat-card {
-      max-width: 400px;
-      margin: 2em auto;
-      text-align: center;
-    }
-    mat-form-field {
-      display: block;
-      margin-bottom: 1em;
-    }
-    mat-card-actions {
-      justify-content: center;
-      padding: 1em;
-    }
-  `]
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
   loginForm: FormGroup;

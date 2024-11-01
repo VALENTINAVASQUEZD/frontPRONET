@@ -6,7 +6,7 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
 import { AuthService, UserProfile } from '../auth.service';
-import { EditarPerfilComponent } from '../editar-perfil/editar-perfil.component';
+import { EditarUsuarioComponent } from '../editar-perfil/editar-perfil.component';
 import { MatTableModule } from '@angular/material/table';
 
 @Component({
@@ -21,48 +21,8 @@ import { MatTableModule } from '@angular/material/table';
     RouterLink,
     MatTableModule
   ],
-  template: `
-    <div class="profile-container">
-      <mat-card *ngIf="perfil" class="profile-card">
-        <mat-card-title>Perfil de Usuario</mat-card-title>
-        <mat-card-content>
-          <table mat-table [dataSource]="tableData" class="mat-elevation-z8">
-            <ng-container matColumnDef="property">
-              <th mat-header-cell *matHeaderCellDef>Propiedad</th>
-              <td mat-cell *matCellDef="let element">{{element.property}}</td>
-            </ng-container>
-            <ng-container matColumnDef="value">
-              <th mat-header-cell *matHeaderCellDef>Valor</th>
-              <td mat-cell *matCellDef="let element">{{element.value}}</td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="['property', 'value']"></tr>
-            <tr mat-row *matRowDef="let row; columns: ['property', 'value'];"></tr>
-          </table>
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-raised-button color="primary" (click)="editarPerfil()">
-            Editar Perfil
-          </button>
-        </mat-card-actions>
-      </mat-card>
-      <mat-spinner *ngIf="loading"></mat-spinner>
-      <p *ngIf="error">{{error}}</p>
-    </div>
-  `,
-  styles: [`
-    .profile-container {
-      max-width: 600px;
-      margin: 2em auto;
-      padding: 0 1em;
-    }
-    .profile-card {
-      padding: 1em;
-    }
-    .mat-mdc-table {
-      width: 100%;
-      margin-bottom: 1em;
-    }
-  `]
+  templateUrl: './perfil.component.html',
+  styleUrls: ['./perfil.component.css']
 })
 export class PerfilComponent implements OnInit {
   perfil: UserProfile | null = null;
@@ -103,7 +63,7 @@ export class PerfilComponent implements OnInit {
   }
 
   editarPerfil() {
-    const dialogRef = this.dialog.open(EditarPerfilComponent, {
+    const dialogRef = this.dialog.open(EditarUsuarioComponent, {
       width: '400px',
       data: this.perfil
     });
