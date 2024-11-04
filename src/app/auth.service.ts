@@ -1,5 +1,3 @@
-// File: src/app/auth.service.ts
-
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
@@ -60,48 +58,6 @@ export class AuthService {
     }
   }
 
-  login(credentials: { username: string; password: string }): Observable<UserProfile> {
-    return this.http.post<UserProfile>(`${this.apiUrl}/usuarios/login/`, credentials).pipe(
-      tap((response: UserProfile) => {
-        console.log('Login response:', response);
-        this.saveUserToStorage(response);
-        this.userSubject.next(response);
-      }),
-      catchError(error => {
-        console.error('Error en login:', error);
-        throw error;
-      })
-    );
-  }
-
-  registro(datos: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/usuarios/registro/`, datos).pipe(
-      catchError(error => {
-        console.error('Error en registro:', error);
-        throw error;
-      })
-    );
-  }
-
-  getPerfil(): Observable<UserProfile> {
-    const user = this.getUserFromStorage();
-    if (!user?.id) {
-      throw new Error('Usuario no autenticado');
-    }
-    
-    return this.http.get<UserProfile>(`${this.apiUrl}/usuarios/perfil/`, { headers: this.getHeaders() }).pipe(
-      tap(profile => {
-        const updatedProfile = { ...profile, id: user.id };
-        this.saveUserToStorage(updatedProfile);
-        this.userSubject.next(updatedProfile);
-      }),
-      catchError(error => {
-        console.error('Error al obtener perfil:', error);
-        throw error;
-      })
-    );
-  }
-
   editarPerfil(datos: Partial<UserProfile>): Observable<UserProfile> {
     const user = this.getUserFromStorage();
     if (!user?.id) {
@@ -118,45 +74,6 @@ export class AuthService {
       }),
       catchError(error => {
         console.error('Error al editar perfil:', error);
-        throw error;
-      })
-    );
-  }
-
-  listarUsuarios(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/usuarios/listar/`, {
-      headers: this.getHeaders()
-    }).pipe(
-      catchError(error => {
-        console.error('Error al listar usuarios:', error);
-        throw error;
-      })
-    );
-  }
-
-  logout(): void {
-    if (this.isBrowser) {
-      localStorage.removeItem('user');
-    }
-    this.userSubject.next(null);
-  }
-
-  isLoggedIn(): boolean {
-    const user = this.getUserFromStorage();
-    return !!user?.id;
-  }
-
-  getUserId(): number | null {
-    const user = this.getUserFromStorage();
-    return user?.id || null;
-  }
-
-  getUsuario(id: number): Observable<UserProfile> {
-    return this.http.get<UserProfile>(`${this.apiUrl}/usuarios/${id}/`, {
-      headers: this.getHeaders()
-    }).pipe(
-      catchError(error => {
-        console.error('Error al obtener usuario:', error);
         throw error;
       })
     );
