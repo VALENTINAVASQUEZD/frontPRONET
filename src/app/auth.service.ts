@@ -1,8 +1,8 @@
-import { isPlatformBrowser } from '@angular/common';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
+import { isPlatformBrowser } from '@angular/common';
 
 export interface UserProfile {
   id: number;
@@ -58,36 +58,12 @@ export class AuthService {
     }
   }
 
-  login(credentials: { username: string; password: string }): Observable<UserProfile> {
-    return this.http.post<UserProfile>(`${this.apiUrl}/usuarios/login/`, credentials).pipe(
-      tap((response: UserProfile) => {
-        console.log('Login response:', response);
-        this.saveUserToStorage(response);
-        this.userSubject.next(response);
-      }),
-      catchError(error => {
-        console.error('Error en login:', error);
-        throw error;
-      })
-    );
-  }
-
-  registro(datos: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/usuarios/registro/`, datos).pipe(
-      catchError(error => {
-        console.error('Error en registro:', error);
-        throw error;
-      })
-
-    );
-  }
-
   getPerfil(): Observable<UserProfile> {
     const user = this.getUserFromStorage();
     if (!user?.id) {
       throw new Error('Usuario no autenticado');
     }
-
+    
     return this.http.get<UserProfile>(`${this.apiUrl}/usuarios/perfil/`, { headers: this.getHeaders() }).pipe(
       tap(profile => {
         const updatedProfile = { ...profile, id: user.id };
@@ -101,32 +77,38 @@ export class AuthService {
     );
   }
 
-
-
-
-
-  logout(): void {
-    if (this.isBrowser) {
-      localStorage.removeItem('user');
-    }
-    this.userSubject.next(null);
-  }
-
-  isLoggedIn(): boolean {
+  editarPerfil(datos: Partial<UserProfile>): Observable<UserProfile> {
     const user = this.getUserFromStorage();
-    return !!user?.id;
+    if (!user?.id) {
+      throw new Error('Usuario no autenticado');
+    }
+
+    return this.http.put<UserProfile>(`${this.apiUrl}/interaccionPerfil/editar/`, datos, { 
+      headers: this.getHeaders()
+    }).pipe(
+      tap(updatedProfile => {
+        const mergedProfile = { ...user, ...updatedProfile };
+        this.saveUserToStorage(mergedProfile);
+        this.userSubject.next(mergedProfile);
+      }),
+      catchError(error => {
+        console.error('Error al editar perfil:', error);
+        throw error;
+      })
+    );
   }
 
-
-
-
-
-
-
+  editarUsuario(id: number, datos: Partial<UserProfile>): Observable<UserProfile> {
+    return this.http.put<UserProfile>(`${this.apiUrl}/interaccionPerfil/editar/${id}/`, datos, {
+      headers: this.getHeaders()
+    }).pipe(
+      catchError(error => {
+        console.error('Error al editar usuario:', error);
+        throw error;
+      })
+    );
+  }
 }
-
-
-
 
 
 
