@@ -58,6 +58,27 @@ export class AuthService {
     }
   }
 
+
+
+  getPerfil(): Observable<UserProfile> {
+    const user = this.getUserFromStorage();
+    if (!user?.id) {
+      throw new Error('Usuario no autenticado');
+    }
+    
+    return this.http.get<UserProfile>(`${this.apiUrl}/usuarios/perfil/`, { headers: this.getHeaders() }).pipe(
+      tap(profile => {
+        const updatedProfile = { ...profile, id: user.id };
+        this.saveUserToStorage(updatedProfile);
+        this.userSubject.next(updatedProfile);
+      }),
+      catchError(error => {
+        console.error('Error al obtener perfil:', error);
+        throw error;
+      })
+    );
+  }
+
   editarPerfil(datos: Partial<UserProfile>): Observable<UserProfile> {
     const user = this.getUserFromStorage();
     if (!user?.id) {
@@ -79,6 +100,11 @@ export class AuthService {
     );
   }
 
+
+
+
+
+
   editarUsuario(id: number, datos: Partial<UserProfile>): Observable<UserProfile> {
     return this.http.put<UserProfile>(`${this.apiUrl}/interaccionPerfil/editar/${id}/`, datos, {
       headers: this.getHeaders()
@@ -90,3 +116,9 @@ export class AuthService {
     );
   }
 }
+
+
+
+
+
+

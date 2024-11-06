@@ -21,12 +21,6 @@ export class UsuarioService {
   getPerfil(): Observable<any> {
     return this.http.get(`${this.apiUrl}/perfil/`, { headers: this.getHeaders() });
   }
-
   editarPerfil(datos: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/perfil/editar/`, datos, { headers: this.getHeaders() });
   }
-
-  listarUsuarios(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/usuarios/listar/`, { headers: this.getHeaders() });
-  }
-}
