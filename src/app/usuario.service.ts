@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -25,3 +25,8 @@ export class UsuarioService {
   editarPerfil(datos: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/perfil/editar/`, datos, { headers: this.getHeaders() });
   }
+
+  listarUsuarios(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/usuarios/listar/`, { headers: this.getHeaders() });
+  }
+}
