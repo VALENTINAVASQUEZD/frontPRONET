@@ -5,9 +5,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { Router } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { PublicacionService } from '../publicacion.service';
-import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-crear-publicacion',
@@ -18,7 +17,8 @@ import { AuthService } from '../auth.service';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    RouterLink
   ],
   templateUrl: './crear-publicacion.component.html',
   styleUrls: ['./crear-publicacion.component.css']
@@ -30,20 +30,19 @@ export class CrearPublicacionComponent {
   constructor(
     private fb: FormBuilder,
     private publicacionService: PublicacionService,
-    private router: Router,
-    private authService: AuthService
+    private router: Router
   ) {
     this.publicacionForm = this.fb.group({
-      contenido: ['', [Validators.required, Validators.maxLength(500)]],
-      userId: ['', Validators.required]
+      contenido: ['', [Validators.required, Validators.maxLength(500)]]
     });
   }
 
   onSubmit() {
     if (this.publicacionForm.valid) {
       this.loading = true;
-      const { userId, contenido } = this.publicacionForm.value;
-      this.publicacionService.crearPublicacion(userId, { contenido }).subscribe({
+      const contenido = this.publicacionForm.get('contenido')?.value;
+      
+      this.publicacionService.crearPublicacion({ contenido }).subscribe({
         next: (response) => {
           console.log('Publicación creada:', response);
           this.loading = false;
@@ -52,7 +51,6 @@ export class CrearPublicacionComponent {
         error: (error) => {
           console.error('Error al crear la publicación:', error);
           this.loading = false;
-          // Handle error (e.g., show error message to user)
         }
       });
     }

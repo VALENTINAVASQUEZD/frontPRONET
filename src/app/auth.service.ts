@@ -1,8 +1,7 @@
-import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
-import { isPlatformBrowser } from '@angular/common';
 
 export interface UserProfile {
   id: number;
@@ -12,7 +11,6 @@ export interface UserProfile {
   apellido: string;
   fecha_nacimiento: string;
   mensaje?: string;
-  token?: string;
 }
 
 @Injectable({
@@ -22,21 +20,13 @@ export class AuthService {
   private apiUrl = 'http://localhost:8000/api/';
   private userSubject: BehaviorSubject<UserProfile | null>;
   public user: Observable<UserProfile | null>;
-  private isBrowser: boolean;
 
-  constructor(
-    private http: HttpClient,
-    @Inject(PLATFORM_ID) platformId: Object
-  ) {
-    this.isBrowser = isPlatformBrowser(platformId);
+  constructor(private http: HttpClient) {
     this.userSubject = new BehaviorSubject<UserProfile | null>(this.getUserFromStorage());
     this.user = this.userSubject.asObservable();
   }
 
   private getUserFromStorage(): UserProfile | null {
-    if (!this.isBrowser) {
-      return null;
-    }
     try {
       const user = localStorage.getItem('user');
       return user ? JSON.parse(user) : null;
@@ -45,16 +35,8 @@ export class AuthService {
     }
   }
 
-  public getHeaders(): HttpHeaders {
-    return new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
-  }
-
   private saveUserToStorage(user: UserProfile): void {
-    if (this.isBrowser) {
-      localStorage.setItem('user', JSON.stringify(user));
-    }
+    localStorage.setItem('user', JSON.stringify(user));
   }
 
   login(credentials: { username: string; password: string }): Observable<UserProfile> {
@@ -80,13 +62,12 @@ export class AuthService {
     );
   }
 
-  getPerfil(userId: number): Observable<UserProfile> {
-    return this.http.get<UserProfile>(`${this.apiUrl}usuarios/perfil/${userId}/`, { headers: this.getHeaders() }).pipe(
+  getPerfil(): Observable<UserProfile> {
+    const userId = this.getUserId();
+    return this.http.get<UserProfile>(`${this.apiUrl}usuarios/perfil/${userId}/`).pipe(
       tap(profile => {
-        if (this.getUserFromStorage()?.id === userId) {
-          this.saveUserToStorage(profile);
-          this.userSubject.next(profile);
-        }
+        this.saveUserToStorage(profile);
+        this.userSubject.next(profile);
       }),
       catchError(error => {
         console.error('Error al obtener perfil:', error);
@@ -95,16 +76,14 @@ export class AuthService {
     );
   }
 
-  editarPerfil(userId: number, datos: Partial<UserProfile>): Observable<UserProfile> {
-    return this.http.put<UserProfile>(`${this.apiUrl}interaccionPerfil/editar/${userId}/`, datos, { 
-      headers: this.getHeaders()
-    }).pipe(
+  editarPerfil(datos: Partial<UserProfile>): Observable<UserProfile> {
+    const userId = this.getUserId();
+    return this.http.put<UserProfile>(`${this.apiUrl}usuarios/perfil/${userId}/`, datos).pipe(
       tap(updatedProfile => {
-        if (this.getUserFromStorage()?.id === userId) {
-          const mergedProfile = { ...this.getUserFromStorage(), ...updatedProfile };
-          this.saveUserToStorage(mergedProfile);
-          this.userSubject.next(mergedProfile);
-        }
+        const currentUser = this.getUserFromStorage();
+        const mergedProfile = { ...currentUser, ...updatedProfile };
+        this.saveUserToStorage(mergedProfile);
+        this.userSubject.next(mergedProfile);
       }),
       catchError(error => {
         console.error('Error al editar perfil:', error);
@@ -113,10 +92,8 @@ export class AuthService {
     );
   }
 
-  listarUsuarios(): Observable<UserProfile[]> {
-    return this.http.get<UserProfile[]>(`${this.apiUrl}usuarios/listar/`, {
-      headers: this.getHeaders()
-    }).pipe(
+  listarUsuarios(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}usuarios/listar/`).pipe(
       catchError(error => {
         console.error('Error al listar usuarios:', error);
         throw error;
@@ -125,14 +102,13 @@ export class AuthService {
   }
 
   logout(): void {
-    if (this.isBrowser) {
-      localStorage.removeItem('user');
-    }
+    localStorage.removeItem('user');
     this.userSubject.next(null);
   }
 
   isLoggedIn(): boolean {
-    return !!this.getUserFromStorage();
+    const user = this.getUserFromStorage();
+    return !!user?.id;
   }
 
   getUserId(): number | null {
@@ -141,9 +117,7 @@ export class AuthService {
   }
 
   getUsuario(id: number): Observable<UserProfile> {
-    return this.http.get<UserProfile>(`${this.apiUrl}usuarios/${id}/`, {
-      headers: this.getHeaders()
-    }).pipe(
+    return this.http.get<UserProfile>(`${this.apiUrl}usuarios/perfil/${id}/`).pipe(
       catchError(error => {
         console.error('Error al obtener usuario:', error);
         throw error;
@@ -152,9 +126,7 @@ export class AuthService {
   }
 
   editarUsuario(id: number, datos: Partial<UserProfile>): Observable<UserProfile> {
-    return this.http.put<UserProfile>(`${this.apiUrl}interaccionPerfil/editar/${id}/`, datos, {
-      headers: this.getHeaders()
-    }).pipe(
+    return this.http.put<UserProfile>(`${this.apiUrl}usuarios/perfil/${id}/`, datos).pipe(
       catchError(error => {
         console.error('Error al editar usuario:', error);
         throw error;

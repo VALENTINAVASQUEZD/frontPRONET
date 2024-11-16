@@ -6,7 +6,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
 import { PublicacionService } from '../publicacion.service';
-import { AuthService } from '../auth.service';
 
 interface Publicacion {
   id: number;
@@ -39,10 +38,7 @@ export class FeedComponent implements OnInit {
   loading = false;
   error: string | null = null;
 
-  constructor(
-    private publicacionService: PublicacionService,
-    private authService: AuthService
-  ) {}
+  constructor(private publicacionService: PublicacionService) {}
 
   ngOnInit() {
     this.cargarPublicaciones();

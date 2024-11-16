@@ -9,21 +9,14 @@ import { AuthService } from './auth.service';
 export class PublicacionService {
   private apiUrl = 'http://localhost:8000/api/publicaciones/';
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService
-  ) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   getPublicaciones(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl, {
-      headers: this.authService.getHeaders()
-    });
+    return this.http.get<any[]>(this.apiUrl);
   }
 
-  crearPublicacion(userId: number, datos: { contenido: string }): Observable<any> {
-    const publicacionData = { ...datos, user_id: userId };
-    return this.http.post(this.apiUrl, publicacionData, {
-      headers: this.authService.getHeaders()
-    });
+  crearPublicacion(datos: { contenido: string }): Observable<any> {
+    const userId = this.authService.getUserId();
+    return this.http.post(this.apiUrl, { ...datos, usuario_id: userId });
   }
 }

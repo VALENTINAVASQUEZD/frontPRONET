@@ -42,44 +42,36 @@ export class PerfilComponent implements OnInit {
   loadPerfil() {
     this.loading = true;
     this.error = null;
-    const userId = this.authService.getUserId();
-    if (userId) {
-      this.authService.getPerfil(userId).subscribe({
-        next: (data) => {
-          this.perfil = data;
-          this.tableData = [
-            {property: 'Nombre de usuario', value: data.username},
-            {property: 'Email', value: data.email},
-            {property: 'Nombre', value: data.nombre},
-            {property: 'Apellido', value: data.apellido},
-            {property: 'Fecha de Nacimiento', value: new Date(data.fecha_nacimiento).toLocaleDateString()}
-          ];
-          this.loading = false;
-        },
-        error: (err) => {
-          console.error('Error al cargar el perfil:', err);
-          this.error = 'Error al cargar el perfil. Por favor, intente nuevamente.';
-          this.loading = false;
-        }
-      });
-    } else {
-      this.error = 'No se pudo obtener el ID del usuario.';
-      this.loading = false;
-    }
+    this.authService.getPerfil().subscribe({
+      next: (data) => {
+        this.perfil = data;
+        this.tableData = [
+          {property: 'Nombre de usuario', value: data.username},
+          {property: 'Email', value: data.email},
+          {property: 'Nombre', value: data.nombre},
+          {property: 'Apellido', value: data.apellido},
+          {property: 'Fecha de Nacimiento', value: new Date(data.fecha_nacimiento).toLocaleDateString()}
+        ];
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar el perfil:', err);
+        this.error = 'Error al cargar el perfil. Por favor, intente nuevamente.';
+        this.loading = false;
+      }
+    });
   }
 
   editarPerfil() {
-    if (this.perfil) {
-      const dialogRef = this.dialog.open(EditarUsuarioComponent, {
-        width: '400px',
-        data: { userId: this.perfil.id }
-      });
+    const dialogRef = this.dialog.open(EditarUsuarioComponent, {
+      width: '400px',
+      data: this.perfil
+    });
 
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.loadPerfil();
-        }
-      });
-    }
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadPerfil();
+      }
+    });
   }
 }
