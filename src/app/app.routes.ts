@@ -11,6 +11,16 @@ export const routes: Routes = [
     loadComponent: () => import('./login/login.component').then(m => m.LoginComponent)
   },
   {
+    path: 'feed',
+    loadComponent: () => import('./feed/feed.component').then(m => m.FeedComponent),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'crear-publicacion',
+    loadComponent: () => import('./crear-publicacion/crear-publicacion.component').then(m => m.CrearPublicacionComponent),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'usuarios',
     loadComponent: () => import('./lista-usuarios/lista-usuarios.component').then(m => m.ListaUsuariosComponent),
     canActivate: [AuthGuard]
@@ -27,7 +37,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: '/login',
+    redirectTo: '/feed',
     pathMatch: 'full'
   }
 ];

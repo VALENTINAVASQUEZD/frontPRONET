@@ -1,10 +1,11 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
-import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { AuthService } from '../auth.service';
+import { EditarUsuarioComponent } from '../editar-perfil/editar-perfil.component';
+import { Router } from '@angular/router';
 
 interface Usuario {
   id: number;
