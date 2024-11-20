@@ -36,6 +36,16 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'informacion-academica',
+    loadComponent: () => import('./informacion-academica/informacion-academica.component').then(m => m.InformacionAcademicaComponent),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'informacion-laboral',
+    loadComponent: () => import('./informacion-laboral/informacion-laboral.component').then(m => m.InformacionLaboralComponent),
+    canActivate: [AuthGuard]
+  },  
+  {
     path: '',
     redirectTo: '/feed',
     pathMatch: 'full'
