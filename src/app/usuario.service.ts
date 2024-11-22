@@ -29,12 +29,12 @@ export class UsuarioService {
   listarUsuarios(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/usuarios/listar/`, { headers: this.getHeaders() });
   }
-  getInformacionAcademica(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/informacion-academica/`, { headers: this.getHeaders() });
+  getInformacionAcademica(userId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/usuarios/listar/informacion-academica/${userId}/`, { headers: this.getHeaders() });
   }
 
-  agregarInformacionAcademica(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/informacion-academica/`, data, { headers: this.getHeaders() });
+  agregarInformacionAcademica(userId: string, data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/listar/informacion-academica/${userId}/`, data, { headers: this.getHeaders() });
   }
 
   getInformacionLaboral(userId: string): Observable<any[]> {

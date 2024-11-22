@@ -36,13 +36,8 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'informacion-academica',
+    path: 'informacion-academica/:user_id',
     loadComponent: () => import('./informacion-academica/informacion-academica.component').then(m => m.InformacionAcademicaComponent),
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'informacion-laboral/:user_id',
-    loadComponent: () => import('./informacion-laboral/informacion-laboral.component').then(m => m.InformacionLaboralComponent),
     canActivate: [AuthGuard]
   },
   {
