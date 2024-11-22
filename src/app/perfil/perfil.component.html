@@ -1,25 +1,26 @@
 <div class="profile-container">
-  <!-- Tarjeta de información personal -->
+  <!-- Tarjeta de Información Personal -->
   <mat-card *ngIf="perfil" class="profile-card">
     <mat-card-title>Perfil de Usuario</mat-card-title>
     <mat-card-content>
       <table mat-table [dataSource]="tableData" class="mat-elevation-z8">
+        <!-- Definición de las columnas -->
         <ng-container matColumnDef="property">
           <th mat-header-cell *matHeaderCellDef>Propiedad</th>
           <td mat-cell *matCellDef="let element">{{ element.property }}</td>
         </ng-container>
+
         <ng-container matColumnDef="value">
           <th mat-header-cell *matHeaderCellDef>Valor</th>
           <td mat-cell *matCellDef="let element">{{ element.value }}</td>
         </ng-container>
+
         <tr mat-header-row *matHeaderRowDef="['property', 'value']"></tr>
         <tr mat-row *matRowDef="let row; columns: ['property', 'value'];"></tr>
       </table>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-raised-button color="primary" (click)="editarPerfil()">
-        Editar Perfil
-      </button>
+      <button mat-raised-button color="primary" (click)="editarPerfil()">Editar Perfil</button>
     </mat-card-actions>
   </mat-card>
 
@@ -27,7 +28,6 @@
   <mat-card *ngIf="informacionLaboral && informacionLaboral.length > 0" class="profile-card">
     <mat-card-title>
       Información Laboral
-      <!-- Botón para agregar información laboral (ubicado en la parte superior de la tarjeta) -->
       <button mat-raised-button color="accent" (click)="agregarInformacionLaboral()" class="add-info-button">
         Agregar Información Laboral
       </button>
@@ -40,10 +40,12 @@
             <th mat-header-cell *matHeaderCellDef>Propiedad</th>
             <td mat-cell *matCellDef="let element">{{ element.property }}</td>
           </ng-container>
+
           <ng-container matColumnDef="value">
             <th mat-header-cell *matHeaderCellDef>Valor</th>
             <td mat-cell *matCellDef="let element">{{ element.value }}</td>
           </ng-container>
+
           <tr mat-header-row *matHeaderRowDef="['property', 'value']"></tr>
           <tr mat-row *matRowDef="let row; columns: ['property', 'value'];"></tr>
         </table>
@@ -52,18 +54,58 @@
     </mat-card-content>
   </mat-card>
 
-  <!-- Mensaje cuando no hay información laboral -->
+  <!-- Mensaje cuando no hay Información Laboral -->
   <mat-card *ngIf="informacionLaboral && informacionLaboral.length === 0" class="profile-card">
     <mat-card-content>
       <p>No hay información laboral disponible.</p>
-      <!-- Botón para agregar información laboral -->
-      <button mat-raised-button color="accent" (click)="agregarInformacionLaboral()">
-        Agregar Información Laboral
-      </button>
+      <button mat-raised-button color="accent" (click)="agregarInformacionLaboral()">Agregar Información Laboral</button>
     </mat-card-content>
   </mat-card>
 
-  <!-- Indicador de carga -->
+  <!-- Tarjeta de Información Académica -->
+  <mat-card *ngIf="informacionAcademica && informacionAcademica.length > 0" class="profile-card">
+    <mat-card-title>
+      Información Académica
+      <button mat-raised-button color="accent" (click)="agregarInformacionAcademica()" class="add-info-button">
+        Agregar Información Académica
+      </button>
+    </mat-card-title>
+    <mat-card-content>
+      <table mat-table [dataSource]="informacionAcademica" class="mat-elevation-z8">
+        <!-- Columna Institución -->
+        <ng-container matColumnDef="institucion">
+          <th mat-header-cell *matHeaderCellDef> Institución </th>
+          <td mat-cell *matCellDef="let element"> {{ element.institucion }} </td>
+        </ng-container>
+
+        <!-- Columna Carrera -->
+        <ng-container matColumnDef="carrera">
+          <th mat-header-cell *matHeaderCellDef> Carrera </th>
+          <td mat-cell *matCellDef="let element"> {{ element.carrera }} </td>
+        </ng-container>
+
+        <!-- Columna Especialización -->
+        <ng-container matColumnDef="especializacion">
+          <th mat-header-cell *matHeaderCellDef> Especialización </th>
+          <td mat-cell *matCellDef="let element"> {{ element.especializacion }} </td>
+        </ng-container>
+
+        <!-- Definición de las filas -->
+        <tr mat-header-row *matHeaderRowDef="['institucion', 'carrera', 'especializacion']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['institucion', 'carrera', 'especializacion']"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Mensaje cuando no hay Información Académica -->
+  <mat-card *ngIf="informacionAcademica && informacionAcademica.length === 0" class="profile-card">
+    <mat-card-content>
+      <p>No hay información académica disponible.</p>
+      <button mat-raised-button color="accent" (click)="agregarInformacionAcademica()">Agregar Información Académica</button>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Indicador de Carga -->
   <mat-spinner *ngIf="loading"></mat-spinner>
   <p *ngIf="error">{{ error }}</p>
 </div>

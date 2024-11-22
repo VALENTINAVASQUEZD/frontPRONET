@@ -31,6 +31,7 @@ export class PerfilComponent implements OnInit {
   error: string | null = null;
   tableData: { property: string; value: string }[] = [];
   informacionLaboral: { tituloTrabajo: string, datos: { property: string, value: string }[] }[] = [];
+  informacionAcademica: { institucion: string, carrera: string, especializacion: string }[] = []; // Añadimos esta propiedad
 
   constructor(
     private authService: AuthService,
@@ -44,6 +45,7 @@ export class PerfilComponent implements OnInit {
     const userId = this.getUserId(); // Obtener el userId
     if (userId) {
       this.loadInformacionLaboral(userId); // Cargar información laboral
+      this.loadInformacionAcademica(userId); // Cargar información académica
     }
   }
 
@@ -100,11 +102,48 @@ export class PerfilComponent implements OnInit {
     });
   }
 
+  // Cargar la información académica del usuario
+// Cargar la información académica del usuario
+loadInformacionAcademica(userId: string) {
+  this.loading = true;
+  this.usuarioService.getInformacionAcademica(userId).subscribe({
+    next: (data) => {
+      this.informacionAcademica = data.map((academica) => ({
+        institucion: academica.institucion,
+        carrera: academica.carrera,
+        especializacion: academica.especializacion,
+        datos: [ // Agregamos la propiedad `datos` al objeto
+          { property: 'Institución', value: academica.institucion },
+          { property: 'Carrera', value: academica.carrera },
+          { property: 'Especialización', value: academica.especializacion }
+        ]
+      }));
+      this.loading = false;
+    },
+    error: (err) => {
+      console.error('Error al cargar información académica:', err);
+      this.error = 'Error al cargar información académica. Por favor, intente nuevamente.';
+      this.loading = false;
+    }
+  });
+}
+
+
+
+
   // Función para redirigir a la página de agregar información laboral
   agregarInformacionLaboral() {
     const userId = this.getUserId();
     if (userId) {
       this.router.navigate([`/informacion-laboral/${userId}`]); // Redirige a la ruta de agregar información laboral
+    }
+  }
+
+  // Función para redirigir a la página de agregar información académica
+  agregarInformacionAcademica() {
+    const userId = this.getUserId();
+    if (userId) {
+      this.router.navigate([`/informacion-academica/${userId}`]); // Redirige a la ruta de agregar información académica
     }
   }
 
