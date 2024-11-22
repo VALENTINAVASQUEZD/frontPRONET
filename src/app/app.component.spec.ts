@@ -16,6 +16,7 @@ import { LoginComponent } from './login/login.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { PerfilComponent } from './perfil/perfil.component';
 import { RegistroComponent } from './registro/registro.component';
+import { InformacionAcademicaComponent } from './informacion-academica/informacion-academica.component';
 
 import { AuthService } from './auth.service';
 import { PublicacionService } from './publicacion.service';
@@ -93,4 +94,5 @@ describe('PRONET Components', () => {
     const component = fixture.componentInstance;
     expect(component).toBeTruthy();
   });
+  
 });
