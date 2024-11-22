@@ -8,7 +8,7 @@ import { MatTableModule } from '@angular/material/table';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, UserProfile } from '../auth.service';
 import { EditarUsuarioComponent } from '../editar-perfil/editar-perfil.component';
-import { UsuarioService } from '../usuario.service'; // Importa UsuarioService
+import { UsuarioService } from '../usuario.service';
 
 @Component({
   selector: 'app-perfil',
@@ -31,25 +31,25 @@ export class PerfilComponent implements OnInit {
   error: string | null = null;
   tableData: { property: string; value: string }[] = [];
   informacionLaboral: { tituloTrabajo: string, datos: { property: string, value: string }[] }[] = [];
-  informacionAcademica: { institucion: string, carrera: string, especializacion: string }[] = []; // Añadimos esta propiedad
+  informacionAcademica: { institucion: string, carrera: string, especializacion: string }[] = [];
 
   constructor(
     private authService: AuthService,
-    private usuarioService: UsuarioService, // Inyecta UsuarioService
+    private usuarioService: UsuarioService,
     private dialog: MatDialog,
-    private router: Router // Inyecta Router para navegar a otras rutas
+    private router: Router
   ) {}
 
   ngOnInit() {
     this.loadPerfil();
-    const userId = this.getUserId(); // Obtener el userId
+    const userId = this.getUserId();
     if (userId) {
-      this.loadInformacionLaboral(userId); // Cargar información laboral
-      this.loadInformacionAcademica(userId); // Cargar información académica
+      this.loadInformacionLaboral(userId);
+      this.loadInformacionAcademica(userId);
     }
   }
 
-  // Cargar el perfil del usuario
+
   loadPerfil() {
     this.loading = true;
     this.error = null;
@@ -73,17 +73,17 @@ export class PerfilComponent implements OnInit {
     });
   }
 
-  // Función para obtener el userId
+
   getUserId(): string | null {
     return localStorage.getItem('userId');
   }
 
-  // Cargar la información laboral del usuario
+
   loadInformacionLaboral(userId: string) {
     this.loading = true;
     this.usuarioService.getInformacionLaboral(userId).subscribe({
       next: (data) => {
-        // Mapea la información laboral a la estructura deseada
+
         this.informacionLaboral = data.map((trabajo) => ({
           tituloTrabajo: trabajo.trabajo,
           datos: [
@@ -102,8 +102,7 @@ export class PerfilComponent implements OnInit {
     });
   }
 
-  // Cargar la información académica del usuario
-// Cargar la información académica del usuario
+
 loadInformacionAcademica(userId: string) {
   this.loading = true;
   this.usuarioService.getInformacionAcademica(userId).subscribe({
@@ -112,7 +111,7 @@ loadInformacionAcademica(userId: string) {
         institucion: academica.institucion,
         carrera: academica.carrera,
         especializacion: academica.especializacion,
-        datos: [ // Agregamos la propiedad `datos` al objeto
+        datos: [ //
           { property: 'Institución', value: academica.institucion },
           { property: 'Carrera', value: academica.carrera },
           { property: 'Especialización', value: academica.especializacion }
@@ -129,25 +128,22 @@ loadInformacionAcademica(userId: string) {
 }
 
 
-
-
-  // Función para redirigir a la página de agregar información laboral
   agregarInformacionLaboral() {
     const userId = this.getUserId();
     if (userId) {
-      this.router.navigate([`/informacion-laboral/${userId}`]); // Redirige a la ruta de agregar información laboral
+      this.router.navigate([`/informacion-laboral/${userId}`]);
     }
   }
 
-  // Función para redirigir a la página de agregar información académica
+
   agregarInformacionAcademica() {
     const userId = this.getUserId();
     if (userId) {
-      this.router.navigate([`/informacion-academica/${userId}`]); // Redirige a la ruta de agregar información académica
+      this.router.navigate([`/informacion-academica/${userId}`]);
     }
   }
 
-  // Función para editar el perfil
+
   editarPerfil() {
     const dialogRef = this.dialog.open(EditarUsuarioComponent, {
       width: '400px',
@@ -156,7 +152,7 @@ loadInformacionAcademica(userId: string) {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.loadPerfil(); // Recargar el perfil después de editar
+        this.loadPerfil();
       }
     });
   }

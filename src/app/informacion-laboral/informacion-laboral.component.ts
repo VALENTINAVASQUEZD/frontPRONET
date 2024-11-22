@@ -21,7 +21,7 @@ export class InformacionLaboralComponent implements OnInit {
   constructor(private usuarioService: UsuarioService) {}
 
   ngOnInit(): void {
-    const userId = 'usuarioId'; // Aquí deberías asignar el ID real del usuario autenticado
+    const userId = 'usuarioId';
     this.obtenerInformacionLaboral(userId);
   }
 
@@ -39,7 +39,7 @@ export class InformacionLaboralComponent implements OnInit {
   }
 
   agregarInformacionLaboral() {
-    const userId = 'usuarioId'; // Asegúrate de tener el userId correcto aquí
+    const userId = 'usuarioId';
 
     const nuevaInfo = {
       trabajo: this.nuevoTrabajo,
@@ -51,10 +51,8 @@ export class InformacionLaboralComponent implements OnInit {
     this.usuarioService.agregarInformacionLaboral(userId, nuevaInfo).subscribe({
       next: (data) => {
         console.log('Información laboral agregada:', data);
-        // Luego de agregar la nueva información, obtenemos la lista actualizada
         this.obtenerInformacionLaboral(userId);
 
-        // Limpiar los campos
         this.nuevoTrabajo = '';
         this.nuevoPuesto = '';
         this.nuevoDepartamento = '';

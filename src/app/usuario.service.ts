@@ -34,7 +34,8 @@ export class UsuarioService {
   }
 
   agregarInformacionAcademica(userId: string, data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/listar/informacion-academica/${userId}/`, data, { headers: this.getHeaders() });
+    const url = `${this.apiUrl}/usuarios/informacion-academica/${userId}/`;
+    return this.http.post(url, data, { headers: this.getHeaders() });
   }
 
   getInformacionLaboral(userId: string): Observable<any[]> {
@@ -42,7 +43,7 @@ export class UsuarioService {
   }
 
   agregarInformacionLaboral(userId: string, nuevaInfo: any): Observable<any> {
-    const url = `${this.apiUrl}/informacion-laboral/${userId}/`;
+    const url = `${this.apiUrl}/usuarios/informacion-laboral/${userId}/`;
     return this.http.post<any>(url, nuevaInfo);
   }
 }

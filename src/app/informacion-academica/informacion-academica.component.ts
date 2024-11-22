@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router'; // Importa ActivatedRoute
 import { UsuarioService } from '../usuario.service';
 
 @Component({
@@ -17,11 +18,20 @@ export class InformacionAcademicaComponent implements OnInit {
   nuevaEspecializacion: string = '';
   error: string = '';
 
-  constructor(private usuarioService: UsuarioService) {}
+  constructor(
+    private usuarioService: UsuarioService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
-    const userId = 'usuarioId'; // Asegúrate de asignar el ID real del usuario
-    this.obtenerInformacionAcademica(userId);
+    const userId = this.route.snapshot.paramMap.get('user_id');
+    if (userId) {
+      console.log('user_id encontrado:', userId);
+      this.obtenerInformacionAcademica(userId);
+    } else {
+      console.error('No se encontró el user_id en la ruta');
+      this.error = 'No se encontró el ID del usuario en la ruta.';
+    }
   }
 
   obtenerInformacionAcademica(userId: string) {
@@ -38,29 +48,34 @@ export class InformacionAcademicaComponent implements OnInit {
   }
 
   agregarInformacionAcademica() {
-    const userId = 'usuarioId'; // Asegúrate de tener el userId correcto aquí
+    const userId = this.route.snapshot.paramMap.get('user_id');
 
-    const nuevaInfo = {
-      institucion: this.nuevaInstitucion,
-      carrera: this.nuevaCarrera,
-      especializacion: this.nuevaEspecializacion
-    };
+    if (userId) {
+      console.log('user_id obtenido para agregar información académica:', userId);
 
-    this.usuarioService.agregarInformacionAcademica(userId, nuevaInfo).subscribe({
-      next: (data) => {
-        console.log('Información académica agregada:', data);
-        // Luego de agregar la nueva información, obtenemos la lista actualizada
-        this.obtenerInformacionAcademica(userId);
+      const nuevaInfo = {
+        institucion: this.nuevaInstitucion,
+        carrera: this.nuevaCarrera,
+        especializacion: this.nuevaEspecializacion
+      };
 
-        // Limpiar los campos
-        this.nuevaInstitucion = '';
-        this.nuevaCarrera = '';
-        this.nuevaEspecializacion = '';
-      },
-      error: (err) => {
-        console.error('Error al agregar información académica', err);
-        this.error = 'Error al agregar la información académica.';
-      }
-    });
+      this.usuarioService.agregarInformacionAcademica(userId, nuevaInfo).subscribe({
+        next: (data) => {
+          console.log('Información académica agregada:', data);
+          this.obtenerInformacionAcademica(userId);
+
+          this.nuevaInstitucion = '';
+          this.nuevaCarrera = '';
+          this.nuevaEspecializacion = '';
+        },
+        error: (err) => {
+          console.error('Error al agregar información académica:', err);
+          this.error = 'Error al agregar la información académica.';
+        }
+      });
+    } else {
+      console.error('No se encontró el user_id para agregar la información académica');
+      this.error = 'No se encontró el ID del usuario en la ruta.';
+    }
   }
 }
