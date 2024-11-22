@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -37,11 +37,12 @@ export class UsuarioService {
     return this.http.post(`${this.apiUrl}/informacion-academica/`, data, { headers: this.getHeaders() });
   }
 
-  getInformacionLaboral(): Observable<any[]> {
-  return this.http.get<any[]>(`${this.apiUrl}/informacion-laboral/`, { headers: this.getHeaders() });
+  getInformacionLaboral(userId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/usuarios/listar/informacion-laboral/${userId}/`, { headers: this.getHeaders() });
   }
 
-  agregarInformacionLaboral(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/informacion-laboral/`, data, { headers: this.getHeaders() });
+  agregarInformacionLaboral(userId: string, nuevaInfo: any): Observable<any> {
+    const url = `${this.apiUrl}/informacion-laboral/${userId}/`;
+    return this.http.post<any>(url, nuevaInfo);
   }
 }

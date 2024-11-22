@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { UsuarioService } from '../usuario.service';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { UsuarioService } from '../usuario.service';
 
 @Component({
   selector: 'app-informacion-laboral',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './informacion-laboral.component.html',
   styleUrls: ['./informacion-laboral.component.css']
 })
@@ -16,20 +16,31 @@ export class InformacionLaboralComponent implements OnInit {
   nuevoPuesto: string = '';
   nuevoDepartamento: string = '';
   nuevasHoras: number = 0;
+  error: string = '';
 
   constructor(private usuarioService: UsuarioService) {}
 
   ngOnInit(): void {
-    this.obtenerInformacionLaboral();
+    const userId = 'usuarioId'; // Aquí deberías asignar el ID real del usuario autenticado
+    this.obtenerInformacionLaboral(userId);
   }
 
-  obtenerInformacionLaboral() {
-    this.usuarioService.getInformacionLaboral().subscribe(data => {
-      this.informacionLaboral = data;
+  obtenerInformacionLaboral(userId: string) {
+    this.usuarioService.getInformacionLaboral(userId).subscribe({
+      next: (data) => {
+        console.log('Datos obtenidos:', data);
+        this.informacionLaboral = data;
+      },
+      error: (err) => {
+        console.error('Error al obtener información laboral', err);
+        this.error = 'Error al obtener información laboral.';
+      }
     });
   }
 
   agregarInformacionLaboral() {
+    const userId = 'usuarioId'; // Asegúrate de tener el userId correcto aquí
+
     const nuevaInfo = {
       trabajo: this.nuevoTrabajo,
       puesto: this.nuevoPuesto,
@@ -37,12 +48,22 @@ export class InformacionLaboralComponent implements OnInit {
       horas: this.nuevasHoras
     };
 
-    this.usuarioService.agregarInformacionLaboral(nuevaInfo).subscribe(() => {
-      this.obtenerInformacionLaboral();
-      this.nuevoTrabajo = '';
-      this.nuevoPuesto = '';
-      this.nuevoDepartamento = '';
-      this.nuevasHoras = 0;
+    this.usuarioService.agregarInformacionLaboral(userId, nuevaInfo).subscribe({
+      next: (data) => {
+        console.log('Información laboral agregada:', data);
+        // Luego de agregar la nueva información, obtenemos la lista actualizada
+        this.obtenerInformacionLaboral(userId);
+
+        // Limpiar los campos
+        this.nuevoTrabajo = '';
+        this.nuevoPuesto = '';
+        this.nuevoDepartamento = '';
+        this.nuevasHoras = 0;
+      },
+      error: (err) => {
+        console.error('Error al agregar información laboral', err);
+        this.error = 'Error al agregar la información laboral.';
+      }
     });
   }
 }
